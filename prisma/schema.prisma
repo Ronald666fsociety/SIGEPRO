@@ -1,0 +1,162 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+// ── Enums ──
+
+enum EstadoProyecto {
+  PLANIFICADO
+  EN_CURSO
+  FINALIZADO
+  CANCELADO
+
+  @@map("estado_proyecto")
+}
+
+enum RolUsuario {
+  ADMINISTRADOR
+  JEFE_PROYECTO
+  USUARIO
+
+  @@map("rol_usuario")
+}
+
+enum TipoDependencia {
+  FIN_INICIO
+  INICIO_INICIO
+  FIN_FIN
+  INICIO_FIN
+
+  @@map("tipo_dependencia")
+}
+
+// ── Models ──
+
+model Usuario {
+  id        Int       @id @default(autoincrement())
+  nombre    String
+  email     String    @unique
+  password  String
+  rol       RolUsuario
+  activo    Boolean   @default(true)
+
+  proyectosCreados Proyecto[] @relation("jefe_proyecto")
+  tareasResponsable Tarea[]   @relation("tarea_responsable")
+  asignaciones      Asignacion[]
+  auditorias        Auditoria[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@map("usuarios")
+}
+
+model Proyecto {
+  id               Int            @id @default(autoincrement())
+  codigo           String         @unique
+  nombre           String
+  descripcion      String?
+  presupuestoTotal Decimal        @default(0) @db.Decimal(12, 2)
+  costoRealTotal   Decimal        @default(0) @db.Decimal(12, 2)
+  estado           EstadoProyecto @default(PLANIFICADO)
+  fechaInicio      DateTime?
+  fechaFin         DateTime?
+  activo           Boolean        @default(true)
+
+  jefeProyectoId Int
+  jefeProyecto   Usuario @relation("jefe_proyecto", fields: [jefeProyectoId], references: [id])
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  tareas Tarea[]
+
+  @@index([jefeProyectoId])
+  @@index([activo])
+  @@map("proyectos")
+}
+
+model Tarea {
+  id                  Int       @id @default(autoincrement())
+  nombre              String
+  descripcion         String?
+  fechaInicio         DateTime?
+  fechaFin            DateTime?
+  progreso            Int       @default(0)
+  presupuestoEstimado Decimal   @default(0) @db.Decimal(12, 2)
+  costoEjecutado      Decimal   @default(0) @db.Decimal(12, 2)
+  activo              Boolean   @default(true)
+
+  proyectoId Int
+  proyecto   Proyecto @relation(fields: [proyectoId], references: [id])
+
+  tareaPadreId Int?
+  tareaPadre   Tarea?  @relation("tarea_hijos", fields: [tareaPadreId], references: [id], onDelete: SetNull)
+  tareasHijas  Tarea[] @relation("tarea_hijos")
+
+  responsableId Int?
+  responsable   Usuario? @relation("tarea_responsable", fields: [responsableId], references: [id])
+
+  dependenciasOrigen  DependenciaTarea[] @relation("dependencia_origen")
+  dependenciasDestino DependenciaTarea[] @relation("dependencia_destino")
+  asignaciones        Asignacion[]
+
+  @@index([proyectoId])
+  @@index([tareaPadreId])
+  @@index([responsableId])
+  @@index([activo])
+  @@map("tareas")
+}
+
+model DependenciaTarea {
+  id             Int             @id @default(autoincrement())
+  tipo           TipoDependencia
+
+  tareaOrigenId  Int
+  tareaOrigen    Tarea @relation("dependencia_origen", fields: [tareaOrigenId], references: [id])
+
+  tareaDestinoId Int
+  tareaDestino   Tarea @relation("dependencia_destino", fields: [tareaDestinoId], references: [id])
+
+  @@unique([tareaOrigenId, tareaDestinoId])
+  @@index([tareaOrigenId])
+  @@index([tareaDestinoId])
+  @@map("dependencias_tarea")
+}
+
+model Asignacion {
+  id             Int     @id @default(autoincrement())
+  horasEstimadas Decimal @default(0) @db.Decimal(6, 2)
+  horasReales    Decimal @default(0) @db.Decimal(6, 2)
+
+  tareaId Int
+  tarea   Tarea @relation(fields: [tareaId], references: [id])
+
+  usuarioId Int
+  usuario   Usuario @relation(fields: [usuarioId], references: [id])
+
+  @@index([tareaId])
+  @@index([usuarioId])
+  @@map("asignaciones")
+}
+
+model Auditoria {
+  id        Int      @id @default(autoincrement())
+  entidad   String
+  entidadId Int
+  accion    String
+  detalle   String?
+  fecha     DateTime @default(now())
+
+  usuarioId Int
+  usuario   Usuario @relation(fields: [usuarioId], references: [id])
+
+  @@index([entidad])
+  @@index([usuarioId])
+  @@index([fecha])
+  @@map("auditoria")
+}

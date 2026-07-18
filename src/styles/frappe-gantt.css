@@ -1,0 +1,189 @@
+/* Dark Tech Glassmorphism frappe-gantt SVG Stylesheet */
+
+/* Root variables for frappe-gantt JavaScript internal theme lookup */
+:root {
+  --g-arrow-color: #60a5fa;
+  --g-bar-color: #2563eb;
+  --g-bar-border: #3b82f6;
+  --g-tick-color-thick: rgba(59, 130, 246, 0.3);
+  --g-tick-color: rgba(59, 130, 246, 0.15);
+  --g-actions-background: rgba(15, 23, 42, 0.9);
+  --g-border-color: rgba(59, 130, 246, 0.2);
+  --g-text-muted: #94a3b8;
+  --g-text-light: #ffffff;
+  --g-text-dark: #f8fafc;
+  --g-progress-color: #3b82f6;
+  --g-handle-color: #60a5fa;
+  --g-weekend-label-color: rgba(30, 41, 59, 0.8);
+  --g-expected-progress: #93c5fd;
+  --g-header-background: #0f172a;
+  --g-row-color: #0f172a;
+  --g-row-border-color: rgba(59, 130, 246, 0.15);
+  --g-today-highlight: #3b82f6;
+  --g-popup-actions: #1e293b;
+  --g-weekend-highlight-color: rgba(30, 41, 59, 0.5);
+}
+
+/* Outer Gantt Container */
+.gantt-container {
+  line-height: 14.5px;
+  position: relative;
+  overflow: auto;
+  font-size: 12px;
+  width: 100%;
+  min-height: 380px;
+  border-radius: 12px !important;
+  background: #0f172a !important;
+  color: #f8fafc !important;
+  border: 1px solid rgba(59, 130, 246, 0.25) !important;
+  box-shadow: inset 0 0 20px rgba(0, 0, 0, 0.5);
+}
+
+/* Explicit SVG canvas & elements styling */
+.gantt-container svg,
+svg.gantt {
+  background: #0f172a !important;
+  border-radius: 12px;
+  width: 100%;
+}
+
+/* Grid background and rows SVG rules */
+svg.gantt rect.grid-background,
+.gantt rect.grid-background {
+  fill: #0f172a !important;
+}
+
+svg.gantt rect.grid-row,
+.gantt rect.grid-row {
+  fill: #0f172a !important;
+}
+
+svg.gantt rect.grid-row:nth-child(2n),
+.gantt rect.grid-row:nth-child(2n) {
+  fill: #162032 !important;
+}
+
+/* Grid Lines & Ticks */
+svg.gantt line.row-line,
+.gantt line.row-line {
+  stroke: rgba(59, 130, 246, 0.15) !important;
+  stroke-width: 1px !important;
+}
+
+svg.gantt line.tick,
+.gantt line.tick {
+  stroke: rgba(59, 130, 246, 0.15) !important;
+  stroke-width: 0.5px !important;
+}
+
+svg.gantt line.tick.thick,
+.gantt line.tick.thick {
+  stroke: rgba(59, 130, 246, 0.3) !important;
+  stroke-width: 1px !important;
+}
+
+/* Header Text Labels */
+svg.gantt text.upper-text,
+.gantt text.upper-text {
+  fill: #60a5fa !important;
+  font-weight: 700 !important;
+  font-size: 13px !important;
+}
+
+svg.gantt text.lower-text,
+.gantt text.lower-text {
+  fill: #94a3b8 !important;
+  font-weight: 500 !important;
+  font-size: 12px !important;
+}
+
+/* Today highlight */
+svg.gantt rect.today-highlight,
+.gantt rect.today-highlight {
+  fill: #3b82f6 !important;
+  opacity: 0.15 !important;
+}
+
+/* Dependency Arrows */
+svg.gantt path.arrow,
+.gantt path.arrow {
+  stroke: #60a5fa !important;
+  stroke-width: 2px !important;
+  fill: none !important;
+}
+
+/* Task Bars */
+svg.gantt .bar-wrapper rect.bar,
+.gantt .bar-wrapper rect.bar {
+  fill: #2563eb !important;
+  stroke: #3b82f6 !important;
+  stroke-width: 1px !important;
+  rx: 6px !important;
+  ry: 6px !important;
+  filter: drop-shadow(0 4px 10px rgba(37, 99, 235, 0.4));
+  transition: all 0.2s ease;
+}
+
+svg.gantt .bar-wrapper:hover rect.bar,
+.gantt .bar-wrapper:hover rect.bar {
+  fill: #3b82f6 !important;
+  stroke: #60a5fa !important;
+  filter: drop-shadow(0 0 15px rgba(96, 165, 250, 0.7));
+}
+
+svg.gantt .bar-wrapper rect.bar-progress,
+.gantt .bar-wrapper rect.bar-progress {
+  fill: #60a5fa !important;
+  rx: 6px !important;
+  ry: 6px !important;
+}
+
+/* Bar Text Labels */
+svg.gantt text.bar-label,
+.gantt text.bar-label {
+  fill: #ffffff !important;
+  font-weight: 600 !important;
+  font-size: 12px !important;
+  text-shadow: 0 1px 3px rgba(0, 0, 0, 0.8);
+}
+
+svg.gantt text.bar-label.big,
+.gantt text.bar-label.big {
+  fill: #f8fafc !important;
+  font-weight: 700 !important;
+}
+
+/* Tooltip Popup */
+.gantt-container .popup-wrapper {
+  position: absolute;
+  top: 0;
+  left: 0;
+  background: rgba(15, 23, 42, 0.95) !important;
+  backdrop-filter: blur(16px) !important;
+  border: 1px solid rgba(59, 130, 246, 0.4) !important;
+  box-shadow: 0 15px 35px rgba(0, 0, 0, 0.8), 0 0 20px rgba(37, 99, 235, 0.2) !important;
+  padding: 14px 18px !important;
+  border-radius: 12px !important;
+  width: max-content;
+  z-index: 1000;
+  color: #f8fafc !important;
+}
+
+.gantt-container .popup-wrapper .title {
+  margin-bottom: 4px;
+  color: #ffffff !important;
+  font-size: 0.95rem !important;
+  font-weight: 700 !important;
+}
+
+.gantt-container .popup-wrapper .subtitle {
+  color: #60a5fa !important;
+  font-size: 0.85rem !important;
+  margin-bottom: 6px;
+  font-weight: 600 !important;
+}
+
+.gantt-container .popup-wrapper .details {
+  color: #94a3b8 !important;
+  font-size: 0.75rem !important;
+}
